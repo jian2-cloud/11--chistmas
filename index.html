@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>专属于11的圣诞节祝福</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+    }
+    /* 首屏文字样式 - 向上移3%、向右移3% */
+    #first-screen {
+      position: absolute;
+      top: 47%;
+      left: 53%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: #fff;
+      text-align: center;
+      opacity: 1;
+      transition: opacity 1s ease;
+      width: 100%;
+      padding: 0 20px;
+      z-index: 10;
+    }
+    #first-screen span {
+      background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #ffe66d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    /* 祝福便签样式 - 固定宽高避免尺寸差异 */
+    .note {
+      position: absolute;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: #fff;
+      border-radius: 6px;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      width: 120px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    /* 烟花容器样式 */
+    #fireworks {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    /* 音量控制按钮 */
+    #volume-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <audio id="bgm" loop preload="auto">
+    <source src="嗜好 (1).mp3" type="audio/mpeg">
+    你的浏览器不支持音频播放
+	</audio>
+
+  <!-- 首屏显示文字 -->
+  <div id="first-screen">
+    <span>专属于11的圣诞节祝福</span>
+  </div>
+  <!-- 烟花容器 -->
+  <div id="fireworks"></div>
+  <!-- 音量控制按钮 -->
+  <button id="volume-btn">🔊</button>
+
+  <script>
+    const blessingTexts = [
+      "遇见你很开心", 
+      "记得吃饭",
+      "天气冷了，我很想你",
+      "好好爱自己",
+      "圣诞快乐",
+      "圣诞美好",
+      "今夜星光，圣诞相伴",
+      "少熬夜哦",
+      "愿所以的烦恼的消失",
+      "多喝水哦",
+      "顺顺利利，开开心心",
+      "别太累，偶尔偷懒也好",
+      "愿你被圣诞温柔以待",
+      "平安夜平平安安",
+      "记得添衣，别感冒啦",
+      "圣诞树下许的愿都会实现",
+      "糖果和你，我都想要",
+      "热红酒和烤栗子都不如你",
+      "圣诞有你，胜过所有",
+      "天冷了，抱抱自己",
+      "把烦恼丢进圣诞袜里",
+      "圣诞的星光落在你肩头",
+      "圣诞的浪漫属于你",
+      "冬天也要温暖呀",
+      "平安喜乐，万事胜意",
+      "圣诞的钟声为你敲响",
+      "雪落圣诞，岁岁年年",
+      "愿你是圣诞最好的礼物",
+      "圣诞的烟火，为你绽放",
+      "你的笑容比圣诞灯还亮",
+      "圣诞的歌，唱给你听",
+      "圣诞的温暖，绕在你身边",
+      "想和你一起过圣诞",
+      "把圣诞的温柔，讲给你听",
+      "圣诞的好运，都奔向你",
+      "平安夜的苹果，给你留着",
+      "圣诞的甜，全都给你",
+      "愿你圣诞，快乐不打烊",
+      "圣诞的惊喜，等你发现",
+      "圣诞的祝福，只给最爱的你",
+      "圣诞的童话，因你成真",
+      "圣诞的灯火，为你点亮",
+      "圣诞的美梦，伴你入睡",
+      "圣诞的快乐，与你共享",
+      "愿圣诞的美好包围你",
+      "圣诞的礼物，偷偷给你准备啦",
+      "记得吃圣诞蛋糕呀",
+      "我在圣诞等你呀",
+      "圣诞的雪花，落在你发梢",
+      "圣诞的暖，融在你心间",
+      "圣诞的风，吹走你烦恼",
+      "圣诞的光，照亮你前方",
+      "圣诞的夜，温柔又浪漫",
+      "圣诞的歌，轻快又悠扬",
+      "圣诞的笑，甜蜜又灿烂",
+      "圣诞的盼，来年再相见",
+      "圣诞的念，岁岁常相伴",
+      "圣诞的约，明年再赴宴",
+      "圣诞的暖，驱散冬日寒",
+      "圣诞的爱，填满你心怀",
+      "圣诞的甜，甜在你舌尖",
+      "圣诞的趣，留在你记忆",
+      "圣诞的闹，热闹又欢笑",
+      "圣诞的静，安心又温馨",
+      "圣诞的红，喜庆又温柔",
+      "圣诞的绿，清新又治愈",
+      "圣诞的白，纯净又可爱",
+      "圣诞的彩，绚烂又多彩",
+      "圣诞的星，指引你前行",
+      "圣诞的月，温柔你梦境",
+      "圣诞的云，柔软你心情",
+      "圣诞的雨，滋润你心底",
+      "圣诞的霜，点缀你时光",
+      "圣诞的雾，朦胧你旅途",
+      "圣诞的露，清新你脚步",
+      "圣诞的雪，浪漫你世界",
+      "圣诞的冰，剔透你心灵",
+      "圣诞的阳，温暖你方向",
+      "圣诞的光，点亮你梦想",
+      "圣诞的影，陪伴你前行",
+      "圣诞的踪，留下你笑容",
+      "圣诞的声，治愈你灵魂",
+      "圣诞的韵，陶醉你心神",
+      "圣诞的律，愉悦你心情",
+      "圣诞的调，调和你烦恼",
+      "圣诞的符，幸福你归宿",
+      "圣诞的章，书写你吉祥"
+    ];
+    const totalNotes = 80;
+    const showInterval = 300;
+    let noteIndex = 0;
+    let isMuted = false;
+    let allNotes = []; 
+    let isHeartForming = false;
+    // 记录已占用的位置区域，避免重叠
+    const occupiedAreas = [];
+    // 标签宽高（与CSS一致）
+    const noteWidth = 120;
+    const noteHeight = 40;
+    // 间距
+    const gap = 10;
+
+    window.addEventListener('load', () => {
+      const bgm = document.getElementById('bgm');
+      const volumeBtn = document.getElementById('volume-btn');
+
+      bgm.play().catch(err => {
+        document.addEventListener('click', () => {
+          bgm.play();
+        }, { once: true });
+      });
+
+      volumeBtn.addEventListener('click', () => {
+        isMuted = !isMuted;
+        bgm.muted = isMuted;
+        volumeBtn.innerText = isMuted ? "🔇" : "🔊";
+      });
+
+      setTimeout(() => {
+        document.getElementById('first-screen').style.opacity = 0;
+        setTimeout(startShowNotes, 1000);
+      }, 2000);
+
+      initFireworks();
+    });
+
+    // 检测位置是否重叠
+    function isOverlap(x, y) {
+      for (let area of occupiedAreas) {
+        const dx = Math.abs(x - area.x);
+        const dy = Math.abs(y - area.y);
+        if (dx < (noteWidth + gap) && dy < (noteHeight + gap)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function startShowNotes() {
+      if (noteIndex >= totalNotes) {
+        setTimeout(() => {
+          formHeartShape();
+        }, 1000);
+        return;
+      }
+      createNote();
+      noteIndex++;
+      setTimeout(startShowNotes, showInterval);
+    }
+
+    function createNote() {
+      const note = document.createElement('div');
+      note.className = 'note';
+      note.innerText = blessingTexts[noteIndex % blessingTexts.length];
+
+      // 循环生成不重叠的位置
+      let x, y;
+      let maxAttempts = 100;
+      let attempts = 0;
+      do {
+        x = Math.random() * (window.innerWidth - noteWidth - gap * 2) + gap;
+        y = Math.random() * (window.innerHeight - noteHeight - gap * 2) + gap;
+        attempts++;
+      } while (isOverlap(x, y) && attempts < maxAttempts);
+
+      // 记录占用区域
+      occupiedAreas.push({x, y});
+
+      note.style.left = x + 'px';
+      note.style.top = y + 'px';
+      note.style.opacity = 1;
+      note.style.transform = 'scale(1)';
+      note.style.transition = 'none';
+
+      const gradColors = [
+        ['#ff6b6b', '#4ecdc4'],
+        ['#ffd1dc', '#c3b1e1'],
+        ['#ffc3a0', '#ffafbd'],
+        ['#f7b731', '#fc4a1a'],
+        ['#40e0d0', '#ff8c00'],
+        ['#87ceeb', '#ffb6c1'],
+        ['#90caf9', '#f48fb1']
+      ];
+      const randomGrad = gradColors[Math.floor(Math.random() * gradColors.length)];
+      note.style.background = `linear-gradient(45deg, ${randomGrad[0]}, ${randomGrad[1]})`;
+
+      document.body.appendChild(note);
+      allNotes.push(note);
+    }
+
+    function formHeartShape() {
+      if (isHeartForming) return;
+      isHeartForming = true;
+
+      // 心形水平位置：向右移3%后为0.48窗口宽度
+      const centerX = window.innerWidth * 0.48;
+      // 心形垂直位置：0.4窗口高度
+      const centerY = window.innerHeight * 0.4;
+      // 心形尺寸系数：再下调5%后为0.030008125
+      const heartSize = Math.min(window.innerWidth, window.innerHeight) * 0.030008125;
+
+      // 目标标签文本
+      const targetText = "遇见你很开心";
+      // 找到目标标签在数组中的索引
+      const targetIndex = allNotes.findIndex(note => note.innerText === targetText);
+      
+      allNotes.forEach((note, index) => {
+        let x, y;
+        // 若为目标标签，设置心形起始点（t=0）的坐标
+        if (index === targetIndex) {
+          // 心形参数方程 t=0 时的坐标
+          x = centerX + heartSize * (16 * Math.pow(Math.sin(0), 3));
+          y = centerY-heartSize * (13 * Math.cos(0)-5 * Math.cos(2*0)-2 * Math.cos(3*0)-Math.cos(4*0));
+        } else {
+          const t = (index / allNotes.length) * Math.PI * 2;
+          x = centerX + heartSize * (16 * Math.pow(Math.sin(t), 3));
+          y = centerY-heartSize * (13 * Math.cos(t)-5 * Math.cos(2*t)-2 * Math.cos(3*t)-Math.cos(4*t));
+          x += (Math.random()-0.5) * 2;
+          y += (Math.random()-0.5) * 2;
+        }
+
+        note.style.transition = 'left 3s ease-in-out, top 3s ease-in-out';
+        note.style.left = x + 'px';
+        note.style.top = y + 'px';
+        note.style.opacity = 1;
+      });
+
+      // 心形聚合完成后，文字重新显示
+      setTimeout(() => {
+        document.getElementById('first-screen').style.opacity = 1;
+      }, 3000);
+    }
+
+    function initFireworks() {
+      const canvas = document.createElement('canvas');
+      canvas.id = 'fireworks';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+
+      setInterval(() => {
+        const fireX = Math.random() * window.innerWidth;
+        const fireY = Math.random() * window.innerHeight * 0.6;
+        createFirework(fireX, fireY);
+      }, 1000);
+
+      function createFirework(x, y) {
+        const particles = [];
+        const particleCount = 50;
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: x,
+            y: y,
+            vx: (Math.random()-0.5) * 8,
+            vy: (Math.random()-0.8) * 8,
+            alpha: 1,
+            color: `hsl(${Math.random()*360}, 100%, 70%)`
+          });
+        }
+
+        function update() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          particles.forEach((p, idx) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha -= 0.01;
+            p.vy += 0.1;
+
+            if (p.alpha <= 0) {
+              particles.splice(idx, 1);
+              return;
+            }
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 200, 100, ${p.alpha})`;
+            ctx.fill();
+          });
+          if (particles.length > 0) {
+            requestAnimationFrame(update);
+          }
+        }
+        update();
+      }
+
+      // 窗口大小变化时，烟花画布自适应
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+    }
+  </script>
+</body>
+</html>
